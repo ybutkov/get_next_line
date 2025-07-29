@@ -1,43 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 17:40:04 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/07/29 18:51:47 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/07/29 18:48:02 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <fcntl.h>
-
-static char	*fill_str_from_buffer(char *cur_str, int *total_len, char *buffer);
-static char	*read_from_fd(int fd, char *res, int total_len, char *buffer);
-
-char	*get_next_line(int fd)
-{
-	static char	buffer[BUFFER_SIZE];
-	int			total_len;
-	char		*res;
-
-	if (fd < 0 || fd >= FD_MAX_SIZE)
-		return (NULL);
-	res = NULL;
-	total_len = 0;
-	if (buffer[0])
-		res = fill_str_from_buffer(NULL, &total_len, buffer);
-	if (buffer[0] != '\0' && res == NULL)
-		return (NULL);
-	if (res && res[total_len - 1] == '\n')
-		return (res[total_len] = '\0', res);
-	res = read_from_fd(fd, res, total_len, buffer);
-	return (res);
-}
 
 static char	*fill_str_from_buffer(char *cur_str, int *total_len, char *buffer)
 {
@@ -91,5 +68,25 @@ static char	*read_from_fd(int fd, char *res, int total_len, char *buffer)
 	}
 	if (res)
 		res[total_len] = '\0';
+	return (res);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	buffer[FD_MAX_SIZE][BUFFER_SIZE];
+	int			total_len;
+	char		*res;
+
+	if (fd < 0 || fd >= FD_MAX_SIZE)
+		return (NULL);
+	res = NULL;
+	total_len = 0;
+	if (buffer[fd][0])
+		res = fill_str_from_buffer(NULL, &total_len, buffer[fd]);
+	if (buffer[fd][0] != '\0' && res == NULL)
+		return (NULL);
+	if (res && res[total_len - 1] == '\n')
+		return (res[total_len] = '\0', res);
+	res = read_from_fd(fd, res, total_len, buffer[fd]);
 	return (res);
 }

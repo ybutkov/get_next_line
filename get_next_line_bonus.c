@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 17:40:04 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/07/30 12:07:47 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/07/30 16:20:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,3 +91,20 @@ char	*get_next_line(int fd)
 	res = read_from_fd(fd, res, total_len, buffer[fd]);
 	return (res);
 }
+
+// int main()
+// {
+// 	char *f = "file.txt";
+// 	int fd = open(f, O_RDONLY);
+
+// 	char *str = get_next_line(fd);
+// 	printf("%s", str); 
+// 	if (str)
+// 		free(str);
+// 	str = get_next_line(fd);
+// 	printf("%s", str);
+// 	if (str)
+// 		free(str);
+// 	close(fd);
+// 	return 0;
+// }

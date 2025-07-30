@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 17:40:04 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/07/29 18:48:02 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/07/30 12:07:47 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,17 @@
 #include <stdlib.h>
 #include <fcntl.h>
 
-static char	*fill_str_from_buffer(char *cur_str, int *total_len, char *buffer)
+static char	*fill_str_from_buffer(char *cur_str, int *total_len,
+	char *buffer, int amount_bytes)
 {
 	int		len;
 	char	*res;
 
 	len = 0;
 	res = NULL;
-	while (len < BUFFER_SIZE && buffer[len] && buffer[len] != '\n')
+	while (len < amount_bytes && buffer[len] && buffer[len] != '\n')
 		len++;
-	if (len < BUFFER_SIZE && buffer[len] == '\n')
+	if (len < amount_bytes && buffer[len] == '\n')
 		len += 1;
 	if (len == 0)
 		return (cur_str);
@@ -38,8 +39,8 @@ static char	*fill_str_from_buffer(char *cur_str, int *total_len, char *buffer)
 		free(cur_str);
 	}
 	ft_memmove(res + *total_len, buffer, len);
-	ft_memmove(buffer, buffer + len, BUFFER_SIZE - len);
-	ft_memset(buffer + BUFFER_SIZE - len, '\0', len);
+	ft_memmove(buffer, buffer + len, amount_bytes - len);
+	ft_memset(buffer + amount_bytes - len, '\0', len);
 	*total_len += len;
 	return (res);
 }
@@ -60,7 +61,7 @@ static char	*read_from_fd(int fd, char *res, int total_len, char *buffer)
 		}
 		else if (read_bytes == 0)
 			break ;
-		res = fill_str_from_buffer(res, &total_len, buffer);
+		res = fill_str_from_buffer(res, &total_len, buffer, read_bytes);
 		if (!res)
 			return (NULL);
 		if (res[total_len - 1] == '\n')
@@ -82,7 +83,7 @@ char	*get_next_line(int fd)
 	res = NULL;
 	total_len = 0;
 	if (buffer[fd][0])
-		res = fill_str_from_buffer(NULL, &total_len, buffer[fd]);
+		res = fill_str_from_buffer(NULL, &total_len, buffer[fd], BUFFER_SIZE);
 	if (buffer[fd][0] != '\0' && res == NULL)
 		return (NULL);
 	if (res && res[total_len - 1] == '\n')
